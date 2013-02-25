@@ -4,63 +4,53 @@
   Copyright 2013 John & Wes Atwood
   License: CC-BY-SA
   */
- 
-// Pin 13 has an LED connected on most Arduino boards.
-// give it a name:
-int batteryMonitor = 2;
-int redLed = 5;
-int greenLed = 7;
-int chargerRelay = 9;
-int piezoSpeaker = 11;
+
+int chargerRelay = 1 ;
+int redLed = 2;
+int greenLed = 3;
+int batteryMonitor = 4;
 
 int oneSec = 1000; //millisecs
 int tenSecs =  /*10 */ 5 * oneSec; //5 because the blink takes 2 secs
 int alarmState = 0;
 int count = 0;
-// the setup routine runs once when you press reset:
-void setup() {                
-  // initialize the digital pin as an output.
-  pinMode(greenLed, OUTPUT);  
-  pinMode(redLed, OUTPUT);  
+
+void setup() {
+  pinMode(greenLed, OUTPUT); 
   pinMode(redLed, OUTPUT);  
   pinMode(chargerRelay, OUTPUT);
+
   pinMode(batteryMonitor, INPUT);
   
   digitalWrite(greenLed, HIGH);   // turn the LED on (HIGH is the voltage level)  
+  digitalWrite(redLed,LOW);
   digitalWrite(chargerRelay, HIGH);
-
-  Serial.begin(9600);
-
+  
+  // not on DigiSpark - Serial uses pin 1
+  //Serial.begin(9600);
 }
 
-// the loop routine runs over and over again forever:
 void loop() {
-  
-  //blink(greenLed, oneSec);
-  //blink(redLed, oneSec);  
   int buttonState;
-  // read the input pin:
-  // print out the state of the button:
-  //Serial.println(buttonState);
   while (! alarmState) {
+      // read the input pin:
       buttonState = digitalRead(batteryMonitor);
-      Serial.println(buttonState);
-      delay(1);        // delay in between reads for stability  
-
-    if (0 == buttonState) {
-     blink(redLed, oneSec); 
-     count = count + oneSec; //milisecs
-     } else {
-     count = 0;
-     }
-    if (count > tenSecs) {
-    alarmState = 1;
-    digitalWrite(redLed, HIGH);
-    digitalWrite(chargerRelay, LOW);
-    }
+      //Serial.println(buttonState);
+      delay(1); // delay in between reads for stability  
+    
+      if (0 == buttonState) {
+        blink(redLed, oneSec); 
+        count = count + oneSec; //milisecs
+        } else {
+          count = 0;
+          }
+      if (count > tenSecs) {
+         alarmState = 1;
+         digitalWrite(redLed, HIGH);
+         digitalWrite(chargerRelay, LOW);
+      }
   } 
 }
-  
 
 void blink(int pin, int duration) {
   digitalWrite(pin, HIGH);   // turn the LED on (HIGH is the voltage level)
